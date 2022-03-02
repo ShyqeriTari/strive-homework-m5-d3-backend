@@ -11,7 +11,8 @@ import cors from "cors"
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const blogsArray = JSON.parse(fs.readFileSync(blogsJSONPath))
 
-const blogsRouter = express.Router() 
+const blogsRouter = express.Router()
+
 blogsRouter.post("/", cors(), (request, response, next) => {
     try {
         const newBlog = { ...request.body, id: uniqId(), createdAt: new Date() }       
@@ -28,7 +29,7 @@ blogsRouter.post("/", cors(), (request, response, next) => {
 })
 
 
-authorsRouter.get("/", cors(), (request,  response, next) => {
+blogsRouter.get("/", cors(), (request,  response, next) => {
 
     try {
       
@@ -41,7 +42,7 @@ authorsRouter.get("/", cors(), (request,  response, next) => {
 })
 
 
-authorsRouter.get("/:blogId", cors(), (request, response, next) => {
+blogsRouter.get("/:blogId", cors(), (request, response, next) => {
 try {
 
     const foundBlog = blogsArray.find(blog => blog.id === request.params.blogId)
@@ -55,7 +56,7 @@ try {
 })
 
 
-authorsRouter.put("/:blogId", cors(), (request, response, next) => {
+blogsRouter.put("/:blogId", cors(), (request, response, next) => {
 try {
 
     const index = blogsArray.findIndex(blog => blog.id === request.params.blogId)
@@ -76,7 +77,7 @@ try {
 })
 
 
-authorsRouter.delete("/:blogId", cors(), (request, response, next) => {
+blogsRouter.delete("/:blogId", cors(), (request, response, next) => {
 
     try {
 

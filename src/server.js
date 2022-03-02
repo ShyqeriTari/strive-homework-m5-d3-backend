@@ -1,6 +1,6 @@
 import express from "express" 
 import listEndpoints from "express-list-endpoints"
-import usersRouter from "./services/blogs/index.js"
+import blogsRouter from "./services/index.js"
 import cors from "cors"
 
 
