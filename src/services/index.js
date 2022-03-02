@@ -7,7 +7,7 @@ import uniqId from "uniqId"
 import cors from "cors"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
-import { newBookValidation } from "./blogValidation.js"
+import { newBlogValidation } from "./blogValidation.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const blogsArray = JSON.parse(fs.readFileSync(blogsJSONPath))
@@ -15,7 +15,7 @@ const writeBlogs = fs.writeFileSync(blogsJSONPath, JSON.stringify(blogsArray))
 
 const blogsRouter = express.Router()
 
-blogsRouter.post("/", cors(), (request, response, next) => {
+blogsRouter.post("/", cors(), newBlogValidation, (request, response, next) => {
 
     try {
         const errorGroup = validationResult(request)
@@ -29,7 +29,7 @@ blogsRouter.post("/", cors(), (request, response, next) => {
         response.status(201).send({ newBlog })
         }else{
 
-      next(createHttpError(400, "Some errors occurred in req body", { errorsList }))
+      next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
         }
     } catch (error) {
         next(error)
