@@ -102,9 +102,9 @@ blogsRouter.delete("/:blogId", cors(), (request, response, next) => {
     try {
         const errorGroup = validationResult(request)
         if(errorGroup.isEmpty()){
-  const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
 
- writeBlogs
+  const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
+ fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
 
   response.status(204).send()
         }else{
