@@ -15,7 +15,7 @@ const blogsRouter = express.Router()
 
 blogsRouter.post("/", cors(), (request, response, next) => {
     try {
-        const newBlog = { ...request.body, id: uniqId(), createdAt: new Date() }       
+        const newBlog = { id: uniqId(), ...request.body, createdAt: new Date() }       
       
         blogsArray.push(newBlog)
       
