@@ -5,23 +5,32 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path" 
 import uniqId from "uniqId" 
 import cors from "cors"
-
-
+import createHttpError from "http-errors"
+import { validationResult } from "express-validator"
+import { newBookValidation } from "./blogValidation.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const blogsArray = JSON.parse(fs.readFileSync(blogsJSONPath))
+const writeBlogs = fs.writeFileSync(blogsJSONPath, JSON.stringify(blogsArray))
 
 const blogsRouter = express.Router()
 
 blogsRouter.post("/", cors(), (request, response, next) => {
+
     try {
+        const errorGroup = validationResult(request)
+        if(errorGroup.isEmpty()){
         const newBlog = { id: uniqId(), ...request.body, createdAt: new Date() }       
       
         blogsArray.push(newBlog)
       
-        fs.writeFileSync(blogsJSONPath, JSON.stringify(blogsArray)) 
+        writeBlogs
       
         response.status(201).send({ newBlog })
+        }else{
+
+      next(createHttpError(400, "Some errors occurred in req body", { errorsList }))
+        }
     } catch (error) {
         next(error)
     }
@@ -66,7 +75,7 @@ try {
     blogsArray[index] = updatedBlog
   
   
-    fs.writeFileSync(blogsJSONPath, JSON.stringify(blogsArray))
+   writeBlogs
   
     response.send(updatedBlog)
     
@@ -83,7 +92,7 @@ blogsRouter.delete("/:blogId", cors(), (request, response, next) => {
 
   const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
 
-  fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
+ writeBlogs
 
   response.status(204).send()
         
