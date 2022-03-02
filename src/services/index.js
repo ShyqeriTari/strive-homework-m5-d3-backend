@@ -41,9 +41,12 @@ blogsRouter.post("/", cors(), newBlogValidation, (request, response, next) => {
 blogsRouter.get("/", cors(), (request,  response, next) => {
 
     try {
-      
+        const errorGroup = validationResult(request)
+        if(errorGroup.isEmpty()){
         response.send(blogsArray)
-        
+        }else{
+            next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+        }
     } catch (error) {
         next(error)
     }
