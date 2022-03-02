@@ -45,7 +45,7 @@ blogsRouter.get("/", cors(), (request,  response, next) => {
         if(errorGroup.isEmpty()){
         response.send(blogsArray)
         }else{
-            next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+            next(createHttpError(404, "Some errors occurred", { errorGroup }))
         }
     } catch (error) {
         next(error)
@@ -56,10 +56,14 @@ blogsRouter.get("/", cors(), (request,  response, next) => {
 
 blogsRouter.get("/:blogId", cors(), (request, response, next) => {
 try {
-
+    const errorGroup = validationResult(request)
+    if(errorGroup.isEmpty()){
     const foundBlog = blogsArray.find(blog => blog.id === request.params.blogId)
   
     response.send(foundBlog)
+    }else{
+        next(createHttpError(404, "Some errors occurred", { errorGroup }))
+    }
 } catch (error) {
     next(error)
 }
@@ -70,7 +74,8 @@ try {
 
 blogsRouter.put("/:blogId", cors(), (request, response, next) => {
 try {
-
+    const errorGroup = validationResult(request)
+    if(errorGroup.isEmpty()){
     const index = blogsArray.findIndex(blog => blog.id === request.params.blogId)
     const oldBlog = blogsArray[index]
     const updatedBlog = { ...oldBlog, ...request.body}
@@ -81,6 +86,9 @@ try {
    writeBlogs
   
     response.send(updatedBlog)
+    }else{
+        next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+    }
     
 } catch (error) {
     next(error)
@@ -92,12 +100,16 @@ try {
 blogsRouter.delete("/:blogId", cors(), (request, response, next) => {
 
     try {
-
+        const errorGroup = validationResult(request)
+        if(errorGroup.isEmpty()){
   const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
 
  writeBlogs
 
   response.status(204).send()
+        }else{
+            next(createHttpError(400, "Some errors occurred in request", { errorGroup }))
+        }
         
     } catch (error) {
         next(error)
