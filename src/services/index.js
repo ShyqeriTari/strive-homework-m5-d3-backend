@@ -8,6 +8,7 @@ import cors from "cors"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
+import { newCommentValidation } from "./commentValidation.js"
 import authorsRouter from "./authors/index.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
@@ -39,11 +40,13 @@ blogsRouter.post("/", newBlogValidation, (request, response, next) => {
 
 })
 
-blogsRouter.post("/blogPosts/:id/comments", (request, response, next) => {
+blogsRouter.post("/blogPosts/:id/comments", newCommentValidation, (request, response, next) => {
 
     try {
         const blogsArray = getBlogs()
+        const errorGroup = validationResult(request)
 
+        if (errorGroup.isEmpty()) {
             const index = blogsArray.findIndex(blog => blog.id === request.params.id)
 
             const blog = blogsArray[index]
@@ -57,7 +60,10 @@ blogsRouter.post("/blogPosts/:id/comments", (request, response, next) => {
             writeBlogs(blogsArray)
 
             response.status(201).send({ blog })
-    
+        } else {
+
+            next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+        }
 
     } catch (error) {
         next(error)
