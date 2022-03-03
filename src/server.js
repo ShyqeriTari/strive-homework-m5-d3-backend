@@ -3,17 +3,21 @@ import listEndpoints from "express-list-endpoints"
 import blogsRouter from "./services/index.js"
 import cors from "cors"
 import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
-
+import filesRouter from "./services/files/index.js"
+import {join} from "path"
 
 const server = express()
 
 const port = 3001
+
+const publicFolderPath = join(process.cwd(), "./public")
 
 server.use(express.json()) 
 
 server.use(cors())
 
 server.use("/blogs", blogsRouter)
+server.use("/files", filesRouter)
 
 server.use(badRequestHandler)
 server.use(unauthorizedHandler)
