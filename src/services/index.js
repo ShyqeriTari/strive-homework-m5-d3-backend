@@ -8,6 +8,7 @@ import cors from "cors"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
+import authorsRouter from "./authors/index.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
@@ -38,6 +39,32 @@ blogsRouter.post("/", newBlogValidation, (request, response, next) => {
 
 })
 
+blogsRouter.post("/blogPosts/:id/comments", (request, response, next) => {
+
+    try {
+        const blogsArray = getBlogs()
+
+            const index = blogsArray.findIndex(blog => blog.id === request.params.id)
+
+            const blog = blogsArray[index]
+
+            const blogComment = blogsArray[index].comments
+
+            const newComment =  {  ...request.body } 
+
+            blogComment.push(newComment)
+
+            writeBlogs(blogsArray)
+
+            response.status(201).send({ blog })
+    
+
+    } catch (error) {
+        next(error)
+    }
+
+})
+
 
 blogsRouter.get("/", (request, response, next) => {
 
@@ -52,12 +79,30 @@ blogsRouter.get("/", (request, response, next) => {
 })
 
 
+
+
 blogsRouter.get("/:blogId", (request, response, next) => {
     try {
         const blogsArray = getBlogs()
         const foundBlog = blogsArray.find(blog => blog.id === request.params.blogId)
 
         response.send(foundBlog)
+
+    } catch (error) {
+        next(error)
+    }
+
+
+})
+
+blogsRouter.get("/blogPosts/:id/comments", (request, response, next) => {
+    try {
+        const blogsArray = getBlogs()
+        const foundBlog = blogsArray.find(blog => blog.id === request.params.id)
+
+        const foundBlogComments = foundBlog.comments
+
+        response.send(foundBlogComments)
 
     } catch (error) {
         next(error)
