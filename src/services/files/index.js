@@ -32,7 +32,7 @@ filesRouter.post("/authors/:id/uploadAvatar", multer().single("avatar"), async (
 
             authorsArray[index] = updatedAuthor
 
-            writeBlogs(authorsArray)
+            writeAuthors(authorsArray)
     response.send(updatedAuthor)
   } catch (error) {
     next(error)
