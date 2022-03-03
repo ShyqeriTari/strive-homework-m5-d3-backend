@@ -1,121 +1,118 @@
 
-import express from "express" 
-import fs from "fs" 
-import { fileURLToPath } from "url" 
-import { dirname, join } from "path" 
-import uniqId from "uniqId" 
+import express from "express"
+import fs from "fs"
+import { fileURLToPath } from "url"
+import { dirname, join } from "path"
+import uniqId from "uniqId"
 import cors from "cors"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
-const blogsArray = JSON.parse(fs.readFileSync(blogsJSONPath))
-const writeBlogs = fs.writeFileSync(blogsJSONPath, JSON.stringify(blogsArray))
+const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
+const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(content))
 
 const blogsRouter = express.Router()
 
-blogsRouter.post("/", cors(), newBlogValidation, (request, response, next) => {
+blogsRouter.post("/", newBlogValidation, (request, response, next) => {
 
     try {
+        const blogsArray = getBlogs()
         const errorGroup = validationResult(request)
-        if(errorGroup.isEmpty()){
-        const newBlog = { id: uniqId(), ...request.body, createdAt: new Date() }       
-      
-        blogsArray.push(newBlog)
-      
-        writeBlogs
-      
-        response.status(201).send({ newBlog })
-        }else{
+        if (errorGroup.isEmpty()) {
+            const newBlog = { id: uniqId(), ...request.body, createdAt: new Date() }
 
-      next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+            blogsArray.push(newBlog)
+
+            writeBlogs(blogsArray)
+
+            response.status(201).send({ newBlog })
+        } else {
+
+            next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
         }
     } catch (error) {
         next(error)
     }
-  
+
 })
 
 
-blogsRouter.get("/", cors(), (request,  response, next) => {
+blogsRouter.get("/", (request, response, next) => {
 
     try {
-        const errorGroup = validationResult(request)
-        if(errorGroup.isEmpty()){
+        const blogsArray = getBlogs()
         response.send(blogsArray)
-        }else{
-            next(createHttpError(404, "Some errors occurred", { errorGroup }))
-        }
+
     } catch (error) {
         next(error)
     }
- 
+
 })
 
 
-blogsRouter.get("/:blogId", cors(), (request, response, next) => {
-try {
-    const errorGroup = validationResult(request)
-    if(errorGroup.isEmpty()){
-    const foundBlog = blogsArray.find(blog => blog.id === request.params.blogId)
-  
-    response.send(foundBlog)
-    }else{
-        next(createHttpError(404, "Some errors occurred", { errorGroup }))
+blogsRouter.get("/:blogId", (request, response, next) => {
+    try {
+        const blogsArray = getBlogs()
+        const foundBlog = blogsArray.find(blog => blog.id === request.params.blogId)
+
+        response.send(foundBlog)
+
+    } catch (error) {
+        next(error)
     }
-} catch (error) {
-    next(error)
-}
 
-  
+
 })
 
 
-blogsRouter.put("/:blogId", cors(), (request, response, next) => {
-try {
-    const errorGroup = validationResult(request)
-    if(errorGroup.isEmpty()){
-    const index = blogsArray.findIndex(blog => blog.id === request.params.blogId)
-    const oldBlog = blogsArray[index]
-    const updatedBlog = { ...oldBlog, ...request.body}
-  
-    blogsArray[index] = updatedBlog
-  
-  
-   writeBlogs
-  
-    response.send(updatedBlog)
-    }else{
-        next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+blogsRouter.put("/:blogId", (request, response, next) => {
+    try {
+        const blogsArray = getBlogs()
+        const errorGroup = validationResult(request)
+        if (errorGroup.isEmpty()) {
+            const index = blogsArray.findIndex(blog => blog.id === request.params.blogId)
+            const oldBlog = blogsArray[index]
+            const updatedBlog = { ...oldBlog, ...request.body }
+
+            blogsArray[index] = updatedBlog
+
+
+            writeBlogs()
+
+            response.send(updatedBlog)
+        } else {
+            next(createHttpError(400, "Some errors occurred in req body", { errorGroup }))
+        }
+
+    } catch (error) {
+        next(error)
     }
-    
-} catch (error) {
-    next(error)
-}
 
 })
 
 
-blogsRouter.delete("/:blogId", cors(), (request, response, next) => {
+blogsRouter.delete("/:blogId", (request, response, next) => {
 
     try {
+        const blogsArray = getBlogs()
         const errorGroup = validationResult(request)
-        if(errorGroup.isEmpty()){
+        if (errorGroup.isEmpty()) {
 
-  const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
- fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
+            const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
+            fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
 
-  response.status(204).send()
-        }else{
+            response.status(204).send()
+        } else {
             next(createHttpError(400, "Some errors occurred in request", { errorGroup }))
         }
-        
+
     } catch (error) {
         next(error)
     }
 
-  
+
 })
 
 export default blogsRouter
