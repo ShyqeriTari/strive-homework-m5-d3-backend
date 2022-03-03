@@ -9,7 +9,6 @@ import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
 import { newCommentValidation } from "./commentValidation.js"
-import authorsRouter from "./authors/index.js"
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
@@ -118,7 +117,7 @@ blogsRouter.get("/blogPosts/:id/comments", (request, response, next) => {
 })
 
 
-blogsRouter.put("/:blogId", (request, response, next) => {
+blogsRouter.put("/:blogId", newBlogValidation, (request, response, next) => {
     try {
         const blogsArray = getBlogs()
         const errorGroup = validationResult(request)
