@@ -4,6 +4,7 @@ import blogsRouter from "./services/index.js"
 import cors from "cors"
 import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler } from "./errorHandlers.js"
 import filesRouter from "./services/files/index.js"
+import authorsRouter from "./services/authors/index.js"
 import {join} from "path"
 
 const server = express()
@@ -17,6 +18,7 @@ server.use(express.json())
 server.use(cors())
 
 server.use("/blogs", blogsRouter)
+server.use("/authors", authorsRouter)
 server.use("/files", filesRouter)
 
 server.use(badRequestHandler)
