@@ -13,7 +13,8 @@
             "avatar": "https://ui-avatars.com/api/?name=Forza+Juventus"
         },
         "content": "Forza Juveee",
-        "createdAt": "2022-03-02T13:54:17.537Z"
+        "createdAt": "2022-03-02T13:54:17.537Z",
+        "comments" : []
     },
     {
         "id": "491a2ugl09o6owr",
@@ -29,6 +30,7 @@
             "avatar": "https://ui-avatars.com/api/?name=Bu+Bu"
         },
         "content": "Your worst lecture, you will be afraid of me",
-        "createdAt": "2022-03-02T14:44:24.603Z"
+        "createdAt": "2022-03-02T14:44:24.603Z",
+        "comments" : []
     }
 ]

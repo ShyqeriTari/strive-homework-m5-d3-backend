@@ -21,7 +21,7 @@ blogsRouter.post("/", newBlogValidation, (request, response, next) => {
         const blogsArray = getBlogs()
         const errorGroup = validationResult(request)
         if (errorGroup.isEmpty()) {
-            const newBlog = { id: uniqId(), ...request.body, createdAt: new Date() }
+            const newBlog = { id: uniqId(), ...request.body, createdAt: new Date(), comments: [] }
 
             blogsArray.push(newBlog)
 
