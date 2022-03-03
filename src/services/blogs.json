@@ -14,7 +14,7 @@
         },
         "content": "Forza Juveee",
         "createdAt": "2022-03-02T13:54:17.537Z",
-        "comments" : []
+        "comments": []
     },
     {
         "id": "491a2ugl09o6owr",
@@ -31,6 +31,23 @@
         },
         "content": "Your worst lecture, you will be afraid of me",
         "createdAt": "2022-03-02T14:44:24.603Z",
-        "comments" : []
+        "comments": []
+    },
+    {
+        "id": "491a189l0b1vs7w",
+        "category": "Party",
+        "title": "david Guetta",
+        "cover": "https://milanoweekend.it/wp-content/uploads/2017/02/DavidGuetta.jpg",
+        "readTime": {
+            "value": 12,
+            "unit": "minute"
+        },
+        "author": {
+            "name": "Party King",
+            "avatar": "https://ui-avatars.com/api/?name=Party+King"
+        },
+        "content": "Let's party all night!",
+        "createdAt": "2022-03-03T13:55:36.475Z",
+        "comments": []
     }
 ]
