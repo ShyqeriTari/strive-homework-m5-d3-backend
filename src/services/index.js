@@ -79,7 +79,7 @@ blogsRouter.put("/:blogId", (request, response, next) => {
             blogsArray[index] = updatedBlog
 
 
-            writeBlogs()
+            writeBlogs(blogsArray)
 
             response.send(updatedBlog)
         } else {
@@ -97,16 +97,13 @@ blogsRouter.delete("/:blogId", (request, response, next) => {
 
     try {
         const blogsArray = getBlogs()
-        const errorGroup = validationResult(request)
-        if (errorGroup.isEmpty()) {
+
 
             const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
             fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
 
             response.status(204).send()
-        } else {
-            next(createHttpError(400, "Some errors occurred in request", { errorGroup }))
-        }
+
 
     } catch (error) {
         next(error)
