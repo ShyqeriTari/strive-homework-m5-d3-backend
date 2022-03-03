@@ -14,7 +14,7 @@ const port = 3001
 const publicFolderPath = join(process.cwd(), "./public")
 
 server.use(express.json()) 
-
+server.use(express.static(publicFolderPath))
 server.use(cors())
 
 server.use("/blogs", blogsRouter)
