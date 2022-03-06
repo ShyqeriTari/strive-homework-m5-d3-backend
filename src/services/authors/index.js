@@ -4,7 +4,6 @@ import fs from "fs"
 import { fileURLToPath } from "url" 
 import { dirname, join } from "path" 
 import uniqId from "uniqId" 
-import cors from "cors"
 
 
 const currentFilePath = fileURLToPath(import.meta.url)
