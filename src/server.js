@@ -9,13 +9,23 @@ import {join} from "path"
 
 const server = express()
 
-const port = 3001
+const port = process.env.PORT
 
 const publicFolderPath = join(process.cwd(), "./public")
 
+const corsOrigin =  [process.env.PROD, process.env.FE]
+
+
 server.use(express.json()) 
 server.use(express.static(publicFolderPath))
-server.use(cors())
+server.use(cors({origin: function(origin, next){
+
+  if(!origin || corsOrigin.indexOf(origin !== -1)){
+    next(null, true)
+  } else{
+     next(new Error ("cors error!"))
+  }
+}}))
 
 server.use("/blogs", blogsRouter)
 server.use("/authors", authorsRouter)
