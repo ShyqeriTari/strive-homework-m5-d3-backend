@@ -16,7 +16,6 @@ const publicFolderPath = join(process.cwd(), "./public")
 
 const corsOrigin =  [process.env.PROD, process.env.FE]
 
-
 server.use(express.json()) 
 server.use(express.static(publicFolderPath))
 server.use(cors({origin: function(origin, next){
