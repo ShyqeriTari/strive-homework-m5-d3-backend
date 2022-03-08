@@ -14,10 +14,28 @@ const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(con
 const authorsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../authors/authors.json")
 const getAuthors = () => JSON.parse(fs.readFileSync(authorsJSONPath))
 const writeAuthors = content => fs.writeFileSync(authorsJSONPath, JSON.stringify(content))
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import {v2 as cloudinary} from cloudinary
 
 const filesRouter = express.Router()
 
-filesRouter.post("/authors/:id/uploadAvatar", multer().single("avatar"), async (request, response, next) => {
+const cloudStorageAut = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "authorM5",
+  },
+})
+const cloudMulterAut = multer({ storage: cloudStorageAut })
+
+const cloudStorageBlog = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "blogM5",
+  },
+})
+const cloudMulterBlog = multer({ storage: cloudStorageBlog })
+
+filesRouter.post("/authors/:id/uploadAvatar",  multer().single("avatar"), async (request, response, next) => {
  
     const authorsArray = getAuthors()
 
@@ -34,6 +52,32 @@ filesRouter.post("/authors/:id/uploadAvatar", multer().single("avatar"), async (
 
             writeAuthors(authorsArray)
     response.send(updatedAuthor)
+  } catch (error) {
+    next(error)
+  }
+})
+
+filesRouter.post("/authors/:id/cloudinaryUpload", cloudMulterAut.single("author"), async (req, res, next) => {
+  try {
+
+    const authors = await getAuthors()
+
+    const index = authors.findIndex(author => author.id === req.params.id)
+
+    if (index !== -1) {
+
+      const oldAuthor = authors[index]
+
+      const updatedAuthor = { ...oldAuthor, authorM5: req.file.path }
+
+      authors[index] = updatedAuthor
+
+      await writeAuthors(authors)
+
+      res.send("Uploaded authors on Cloudinary!")
+    } else {
+      next(createHttpError(404))
+    }
   } catch (error) {
     next(error)
   }
@@ -58,5 +102,32 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       next(error)
     }
   })
+
+  filesRouter.post("/blogs/:id/cloudinaryUpload", cloudMulterBlog.single("blog"), async (req, res, next) => {
+    try {
+  
+      const blogs = await getBlogs()
+  
+      const index = blogs.findIndex(blog => blog.id === req.params.id)
+  
+      if (index !== -1) {
+  
+        const oldBlog = authors[index]
+  
+        const updatedBlog = { ...oldBlog, blogM5: req.file.path }
+  
+        blogs[index] = updatedBlog
+  
+        await writeBlogs(blogs)
+  
+        res.send("Uploaded blogs on Cloudinary!")
+      } else {
+        next(createHttpError(404))
+      }
+    } catch (error) {
+      next(error)
+    }
+  })
+  
 
 export default filesRouter
