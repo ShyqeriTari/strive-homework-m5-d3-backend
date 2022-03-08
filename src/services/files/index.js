@@ -7,6 +7,9 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import fs from "fs"
 
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import {v2 as cloudinary} from "cloudinary"
+
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
 const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(content))
@@ -14,8 +17,7 @@ const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(con
 const authorsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../authors/authors.json")
 const getAuthors = () => JSON.parse(fs.readFileSync(authorsJSONPath))
 const writeAuthors = content => fs.writeFileSync(authorsJSONPath, JSON.stringify(content))
-import { CloudinaryStorage } from "multer-storage-cloudinary"
-import {v2 as cloudinary} from cloudinary
+
 
 const filesRouter = express.Router()
 
