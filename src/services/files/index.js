@@ -114,7 +114,7 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
   
       if (index !== -1) {
   
-        const oldBlog = authors[index]
+        const oldBlog = blogs[index]
   
         const updatedBlog = { ...oldBlog, blogM5: req.file.path }
   
