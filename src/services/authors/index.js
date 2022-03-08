@@ -3,7 +3,7 @@ import express from "express"
 import fs from "fs" 
 import { fileURLToPath } from "url" 
 import { dirname, join } from "path" 
-import uniqId from "uniqId" 
+import uniqid from "uniqid" 
 
 
 const currentFilePath = fileURLToPath(import.meta.url)
@@ -20,7 +20,7 @@ const authorsRouter = express.Router()
 authorsRouter.post("/", (request, response, next) => {
 
     try{
-        const newAuthor = { ...request.body, id: uniqId() } 
+        const newAuthor = { ...request.body, id: uniqid() } 
 
 
         const authorsArray = JSON.parse(fs.readFileSync(authorsJSONPath))
