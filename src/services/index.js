@@ -3,7 +3,7 @@ import express from "express"
 import fs from "fs"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
-import uniqId from "uniqId"
+import uniqid from "uniqid"
 import cors from "cors"
 import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
@@ -22,7 +22,7 @@ blogsRouter.post("/", newBlogValidation, (request, response, next) => {
         const blogsArray = getBlogs()
         const errorGroup = validationResult(request)
         if (errorGroup.isEmpty()) {
-            const newBlog = { id: uniqId(), ...request.body, createdAt: new Date(), comments: [] }
+            const newBlog = { id: uniqid(), ...request.body, createdAt: new Date(), comments: [] }
 
             blogsArray.push(newBlog)
 
