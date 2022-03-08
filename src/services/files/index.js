@@ -70,7 +70,7 @@ filesRouter.post("/authors/:id/cloudinaryUpload", cloudMulterAut.single("author"
 
       const oldAuthor = authors[index]
 
-      const updatedAuthor = { ...oldAuthor, authorM5: req.file.path }
+      const updatedAuthor = { ...oldAuthor, avatar: req.file.path }
 
       authors[index] = updatedAuthor
 
@@ -116,11 +116,11 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
   
         const oldBlog = blogs[index]
   
-        const updatedBlog = { ...oldBlog, blogM5: req.file.path }
+        const updatedBlog = { ...oldBlog, cover: req.file.path }
   
         blogs[index] = updatedBlog
   
-        writeBlogs(blogs)
+        await writeBlogs(blogs)
   
         res.send("Uploaded blogs on Cloudinary!")
       } else {
