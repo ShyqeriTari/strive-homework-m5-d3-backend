@@ -120,7 +120,7 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
   
         blogs[index] = updatedBlog
   
-        await writeBlogs(blogs)
+        writeBlogs(blogs)
   
         res.send("Uploaded blogs on Cloudinary!")
       } else {
