@@ -11,7 +11,7 @@ const server = express()
 
 const port = process.env.PORT
 
-const publicFolderPath = join(process.cwd(), "./public")
+const publicFolderPath = join(process.cwd(), "./public/img")
 
 const corsOrigin =  [process.env.PROD, process.env.FE]
 
