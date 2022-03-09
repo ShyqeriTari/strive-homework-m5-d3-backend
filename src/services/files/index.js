@@ -132,6 +132,8 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       console.log(error)
     }
   })
+
+  filesRouter
   
 
 export default filesRouter
