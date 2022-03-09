@@ -145,9 +145,9 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       const thisBlog = blogsArray[index]
       res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
 
-//       let data = thisBlog.cover;
+//       let data = thisBlog.cover; // <-- string fetch node-fetch arrayfbuffer  /whatever.jpg
 // let buff = new Buffer(data);
-// let base64data = buff.toString('base64');
+// let base64data = buff.toString('base64'); // mime  --> whatever.jpg --> image/jpg
 
 // const imageT = "data:image/jpg;base64,/9j/" + base64data
 
