@@ -123,9 +123,9 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
         await writeBlogs(blogs)
   
         res.send("Uploaded blogs on Cloudinary!")
-      // } else {
-      //   next(createHttpError(404))
-      // }
+      } else {
+        next(createHttpError(404))
+      }
     } catch (error) {
       next(error)
     }
