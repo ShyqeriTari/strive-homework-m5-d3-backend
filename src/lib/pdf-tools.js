@@ -15,10 +15,10 @@ export const getPDFstream = (header, text, imageUrl) => {
 
             content: [
         
-                // {
-                //     image: "image",
-                //     fit: [520, 520]
-                // },
+                {
+                    image: imageUrl,
+                    fit: [520, 520]
+                },
                 {
                     text: header,
                     style: 'header',
@@ -26,10 +26,7 @@ export const getPDFstream = (header, text, imageUrl) => {
                 },
                 text,
             ],
-            // images: {
-            //     image: imageUrl
 
-            // },
             styles: {
                 header: {
                     fontSize: 18,

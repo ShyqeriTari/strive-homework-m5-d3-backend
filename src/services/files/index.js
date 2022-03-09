@@ -13,6 +13,8 @@ import {v2 as cloudinary} from "cloudinary"
 import { getPDFstream } from "../../lib/pdf-tools.js"
 import { pipeline } from "stream"
 
+import axios from "axios"
+
 
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
@@ -137,7 +139,7 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
     }
   })
 
-  filesRouter.get("/downloadPDF/:id", ( req, res) => {
+  filesRouter.get("/downloadPDF/:id", async ( req, res) => {
 
     try {
       const blogsArray = getBlogs()
@@ -145,15 +147,24 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       const thisBlog = blogsArray[index]
       res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
 
+
+
 //       let data = thisBlog.cover; // <-- string fetch node-fetch arrayfbuffer  /whatever.jpg
 // let buff = new Buffer(data);
 // let base64data = buff.toString('base64'); // mime  --> whatever.jpg --> image/jpg
 
 // const imageT = "data:image/jpg;base64,/9j/" + base64data
 
+const response = await axios.get(thisBlog.cover, {
+  responseType: "arraybuffer",
+})
+const blogCoverURLParts = thisBlog.cover.split("/");
+const fileName = blogCoverURLParts[blogCoverURLParts.length - 1];
+const [ extension] = fileName.split(".");
+const base64 = response.data.toString("base64");
+const base64Image = `data:image/${extension};base64,${base64}`;
 
-
-      const source = getPDFstream(thisBlog.title, thisBlog.content)
+      const source = getPDFstream(thisBlog.title, thisBlog.content, base64Image)
 
       // , imageT
 
