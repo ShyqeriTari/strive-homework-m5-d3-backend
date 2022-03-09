@@ -16,7 +16,7 @@ export const getPDFstream = (header, text, imageUrl) => {
             content: [
         
                 {
-                    image: 'sampleImage.jpg',
+                    image: "image",
                     fit: [520, 520]
                 },
                 {
@@ -26,11 +26,10 @@ export const getPDFstream = (header, text, imageUrl) => {
                 },
                 text,
             ],
-            
             images: {
-                building: imageUrl
+                image: imageUrl
+
             },
-            
             styles: {
                 header: {
                     fontSize: 18,
@@ -46,9 +45,9 @@ export const getPDFstream = (header, text, imageUrl) => {
       };
       
       
-     const pdfStream = printer.createPdfKitDocument(docDefinition);
+     const pdfStream = printer.createPdfKitDocument(docDefinition, {});
     
-      pdfStream.end();
+      pdfStream.end()
     return pdfStream
 
 }

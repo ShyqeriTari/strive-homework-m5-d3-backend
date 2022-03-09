@@ -137,13 +137,15 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
     }
   })
 
-  filesRouter.get("/downloadPDF/:id", (req, res, next) => {
+  filesRouter.get("/downloadPDF/:id", ( req, res) => {
 
     try {
       const blogsArray = getBlogs()
-      const index = blogsArray.findIndex(blog => blog.id === request.params.id)
+      const index = blogsArray.findIndex(blog => blog.id === req.params.id)
       const thisBlog = blogsArray[index]
       res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
+
+
 
       const source = getPDFstream(thisBlog.title, thisBlog.content, thisBlog.cover)
 
