@@ -145,11 +145,17 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       const thisBlog = blogsArray[index]
       res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
 
+//       let data = thisBlog.cover;
+// let buff = new Buffer(data);
+// let base64data = buff.toString('base64');
+
+// const imageT = "data:image/jpg;base64,/9j/" + base64data
 
 
-      const source = getPDFstream(thisBlog.title, thisBlog.content, thisBlog.cover)
 
-      
+      const source = getPDFstream(thisBlog.title, thisBlog.content)
+
+      // , imageT
 
       const destination = res
 
