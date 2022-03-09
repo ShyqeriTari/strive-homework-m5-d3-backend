@@ -108,19 +108,19 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
   filesRouter.post("/blogs/:id/cloudinaryUpload", cloudMulterBlog.single("blog"), async (req, res, next) => {
     try {
   
-      // const blogs = await getBlogs()
+      const blogs = await getBlogs()
   
-      // const index = blogs.findIndex(blog => blog.id === req.params.id)
+      const index = blogs.findIndex(blog => blog.id === req.params.id)
   
-      // if (index !== -1) {
+      if (index !== -1) {
   
-      //   const oldBlog = blogs[index]
+        const oldBlog = blogs[index]
   
-      //   const updatedBlog = { ...oldBlog, cover: req.file.path }
+        const updatedBlog = { ...oldBlog, cover: req.file.path }
   
-      //   blogs[index] = updatedBlog
+        blogs[index] = updatedBlog
   
-      //   await writeBlogs(blogs)
+        await writeBlogs(blogs)
   
         res.send("Uploaded blogs on Cloudinary!")
       // } else {
