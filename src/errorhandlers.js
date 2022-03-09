@@ -26,4 +26,5 @@ export const badRequestHandler = (err, req, res, next) => {
   export const genericErrorHandler = (err, req, res, next) => {
     console.log(`Hello I am the generic error handler here is the error ${err}`)
     res.status(500).send({ message: "Generic Server Error" })
+    console.log(err)
   }

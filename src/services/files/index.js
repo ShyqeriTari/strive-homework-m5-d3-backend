@@ -128,6 +128,7 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
       }
     } catch (error) {
       next(error)
+      console.log(error)
     }
   })
   
