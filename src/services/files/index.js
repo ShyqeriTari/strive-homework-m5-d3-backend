@@ -10,6 +10,10 @@ import fs from "fs"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
 import {v2 as cloudinary} from "cloudinary"
 
+import { getPDFstream } from "../../lib/pdf-tools.js"
+import { pipeline } from "stream"
+
+
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "../blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
 const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(content))
@@ -133,7 +137,25 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
     }
   })
 
-  filesRouter
+  filesRouter.get("/downloadPDF/:id", (req, res, next) => {
+
+    try {
+      const blogsArray = getBlogs()
+      const index = blogsArray.findIndex(blog => blog.id === request.params.id)
+      const thisBlog = blogsArray[index]
+      res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
+
+      const source = getPDFstream(thisBlog.title, thisBlog.content, thisBlog.cover)
+
+      const destination = res
+
+      pipeline(source, destination, err => {
+        console.log(err)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  })
   
 
 export default filesRouter

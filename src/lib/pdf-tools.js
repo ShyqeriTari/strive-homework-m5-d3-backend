@@ -6,7 +6,6 @@ export const getPDFstream = (header, text, imageUrl) => {
         Helvetica: {
           normal: 'Helvetica',
           bold: 'Helvetica-Bold',
-          italics: 'Helvetica-Italics',
         }
       };
       
