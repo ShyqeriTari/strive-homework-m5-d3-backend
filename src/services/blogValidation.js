@@ -1,5 +1,6 @@
 import { body } from "express-validator"
 
+
 export const newBlogValidation = [
   body("title").notEmpty().withMessage("Title is a mandatory field!"),
   body("category").notEmpty().withMessage("Category is a mandatory field!"),
