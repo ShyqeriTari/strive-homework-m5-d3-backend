@@ -147,9 +147,9 @@ filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (
 
 
 
-      const source = getPDFstream(thisBlog.title, thisBlog.content)
+      const source = getPDFstream(thisBlog.title, thisBlog.content, thisBlog.cover)
 
-      // thisBlog.cover
+      
 
       const destination = res
 
