@@ -12,7 +12,6 @@ const currentFilePath = fileURLToPath(import.meta.url)
 const parentFolderPath = dirname(currentFilePath)
 
 
-
 const authorsJSONPath = join(parentFolderPath, "authors.json")
 
 const authorsRouter = express.Router() 
