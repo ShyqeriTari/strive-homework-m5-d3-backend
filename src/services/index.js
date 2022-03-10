@@ -9,7 +9,6 @@ import createHttpError from "http-errors"
 import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
 import { newCommentValidation } from "./commentValidation.js"
-
 import sgMail from "@sendgrid/mail"
 
 sgMail.setApiKey(process.env.SENDGRID_KEY)
@@ -33,6 +32,7 @@ const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(con
 const blogsRouter = express.Router()
 
 blogsRouter.post("/", newBlogValidation, (request, response, next) => {
+
 
     try {
         const blogsArray = getBlogs()
