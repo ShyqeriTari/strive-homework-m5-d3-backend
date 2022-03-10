@@ -10,6 +10,22 @@ import { validationResult } from "express-validator"
 import { newBlogValidation } from "./blogValidation.js"
 import { newCommentValidation } from "./commentValidation.js"
 
+import sgMail from "@sendgrid/mail"
+
+sgMail.setApiKey(process.env.SENDGRID_KEY)
+
+const sendRegistrationEmail = async recipientAddress => {
+    const msg = {
+        to: recipientAddress,
+        from: process.env.SENDER_EMAIL,
+        subject: "Strive new post created",
+        text: "You have successfully created a new blog post",
+        html: "<strong>You have successfully created a new blog post</strong>",
+    }
+
+    await sgMail.send(msg)
+}
+
 const blogsJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogs.json")
 const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath))
 const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(content))
@@ -52,7 +68,7 @@ blogsRouter.post("/blogPosts/:id/comments", newCommentValidation, (request, resp
 
             const blogComment = blogsArray[index].comments
 
-            const newComment =  {  ...request.body } 
+            const newComment = { ...request.body }
 
             blogComment.push(newComment)
 
@@ -149,10 +165,10 @@ blogsRouter.delete("/:blogId", (request, response, next) => {
         const blogsArray = getBlogs()
 
 
-            const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
-            fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
+        const remainingBlogs = blogsArray.filter(blog => blog.id !== request.params.blogId)
+        fs.writeFileSync(blogsJSONPath, JSON.stringify(remainingBlogs))
 
-            response.status(204).send()
+        response.status(204).send()
 
 
     } catch (error) {
@@ -160,6 +176,18 @@ blogsRouter.delete("/:blogId", (request, response, next) => {
     }
 
 
+})
+
+blogsRouter.post("/registerEmail", async (req, res, next) => {
+    try {
+        const { email } = req.body
+
+        await sendRegistrationEmail(email)
+        res.send()
+
+    } catch (error) {
+        next(error)
+    }
 })
 
 export default blogsRouter

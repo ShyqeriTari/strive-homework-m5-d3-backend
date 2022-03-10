@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ShyqeriTari/strive-homework-m5-d3-backend#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.6.2",
     "axios": "^0.26.0",
     "cloudinary": "^1.28.1",
     "cors": "^2.8.5",
