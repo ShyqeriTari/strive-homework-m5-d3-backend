@@ -63,6 +63,24 @@ authorsRouter.get("/", (request, response, next) => {
 
 })
 
+authorsRouter.get("/downloadCSV", ( req, res, next) => {
+    try {
+
+        res.setHeader("Content-Disposition", "attachment; filename=authors.csv")
+
+        const source = getAuthorsReadableStream()
+        const transform = new json2csv.Transform({ fields: ["name", "surname", "email", "birthDate", "avatar", "id"] })
+        const destination = res
+    
+        pipeline(source, transform, destination, err => {
+          console.log( err)
+        })
+        
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 authorsRouter.get("/:authorId", (request, response, next) => {
 
@@ -131,22 +149,6 @@ authorsRouter.delete("/:authorId", (request, response, next) => {
 
 })
 
-authorsRouter.get("/downloadCSV/a", ( req, res, next) => {
-    try {
 
-        res.setHeader("Content-Disposition", "attachment; filename=authors.csv")
-
-        const source = getAuthorsReadableStream()
-        const transform = new json2csv.Transform({ fields: ["name", "surname", "email", "birthDate", "avatar", "id"] })
-        const destination = res
-    
-        pipeline(source, transform, destination, err => {
-          console.log( err)
-        })
-        
-    } catch (error) {
-        next(error)
-    }
-})
 
 export default authorsRouter
