@@ -31,7 +31,7 @@ const writeBlogs = content => fs.writeFileSync(blogsJSONPath, JSON.stringify(con
 
 const blogsRouter = express.Router()
 
-blogsRouter.post("/", newBlogValidation, (request, response, next) => {
+blogsRouter.post("/", newBlogValidation, async (request, response, next) => {
 
 
     try {
@@ -43,6 +43,11 @@ blogsRouter.post("/", newBlogValidation, (request, response, next) => {
             blogsArray.push(newBlog)
 
             writeBlogs(blogsArray)
+
+            const { email } = request.body.author
+
+            await sendRegistrationEmail(email)
+          
 
             response.status(201).send({ newBlog })
         } else {
@@ -178,16 +183,5 @@ blogsRouter.delete("/:blogId", (request, response, next) => {
 
 })
 
-blogsRouter.post("/registerEmail", async (req, res, next) => {
-    try {
-        const { email } = req.body
-
-        await sendRegistrationEmail(email)
-        res.send()
-
-    } catch (error) {
-        next(error)
-    }
-})
 
 export default blogsRouter
