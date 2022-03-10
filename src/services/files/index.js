@@ -1,14 +1,14 @@
 
-   
+
 import express from "express"
-import multer from "multer" 
+import multer from "multer"
 import { saveAuthorsPictures, saveBlogsPictures } from "../../lib/fs-tools.js"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import fs from "fs"
 
 import { CloudinaryStorage } from "multer-storage-cloudinary"
-import {v2 as cloudinary} from "cloudinary"
+import { v2 as cloudinary } from "cloudinary"
 
 import { getPDFstream } from "../../lib/pdf-tools.js"
 import { pipeline } from "stream"
@@ -44,22 +44,22 @@ const cloudStorageBlog = new CloudinaryStorage({
 })
 const cloudMulterBlog = multer({ storage: cloudStorageBlog })
 
-filesRouter.post("/authors/:id/uploadAvatar",  multer().single("avatar"), async (request, response, next) => {
- 
-    const authorsArray = getAuthors()
+filesRouter.post("/authors/:id/uploadAvatar", multer().single("avatar"), async (request, response, next) => {
 
-    try {
+  const authorsArray = getAuthors()
+
+  try {
     await saveAuthorsPictures(request.file.originalname, request.file.buffer)
     console.log(request.file)
 
-      const index = authorsArray.findIndex(author => author.id === request.params.id)
-            const oldAuthor = authorsArray[index]
-            const newUrl = `http://localhost:3001/img/authors/${request.file.originalname}`
-            const updatedAuthor = { ...oldAuthor, avatar: newUrl}
+    const index = authorsArray.findIndex(author => author.id === request.params.id)
+    const oldAuthor = authorsArray[index]
+    const newUrl = `http://localhost:3001/img/authors/${request.file.originalname}`
+    const updatedAuthor = { ...oldAuthor, avatar: newUrl }
 
-            authorsArray[index] = updatedAuthor
+    authorsArray[index] = updatedAuthor
 
-            writeAuthors(authorsArray)
+    writeAuthors(authorsArray)
     response.send(updatedAuthor)
   } catch (error) {
     next(error)
@@ -93,90 +93,90 @@ filesRouter.post("/authors/:id/cloudinaryUpload", cloudMulterAut.single("author"
 })
 
 filesRouter.post("/blogPosts/:id/uploadCover", multer().single("cover"), async (request, response, next) => {
-    const blogsArray = getBlogs()
-    try {
-      await saveBlogsPictures(request.file.originalname, request.file.buffer)
-      console.log(request.file)
+  const blogsArray = getBlogs()
+  try {
+    await saveBlogsPictures(request.file.originalname, request.file.buffer)
+    console.log(request.file)
 
-      const index = blogsArray.findIndex(blog => blog.id === request.params.id)
-            const oldBlog = blogsArray[index]
-            const newUrl = `http://localhost:3001/img/blogs/${request.file.originalname}`
-            const updatedBlog = { ...oldBlog, cover: newUrl}
+    const index = blogsArray.findIndex(blog => blog.id === request.params.id)
+    const oldBlog = blogsArray[index]
+    const newUrl = `http://localhost:3001/img/blogs/${request.file.originalname}`
+    const updatedBlog = { ...oldBlog, cover: newUrl }
 
-            blogsArray[index] = updatedBlog
+    blogsArray[index] = updatedBlog
 
-            writeBlogs(blogsArray)
-      response.send(updatedBlog)
-    } catch (error) {
-      next(error)
-    }
-  })
-
-  filesRouter.post("/blogs/:id/cloudinaryUpload", cloudMulterBlog.single("blog"), async (req, res, next) => {
-    try {
-  
-      const blogs = await getBlogs()
-  
-      const index = blogs.findIndex(blog => blog.id === req.params.id)
-  
-      if (index !== -1) {
-  
-        const oldBlog = blogs[index]
-  
-        const updatedBlog = { ...oldBlog, cover: req.file.path }
-  
-        blogs[index] = updatedBlog
-  
-        await writeBlogs(blogs)
-  
-        res.send("Uploaded blogs on Cloudinary!")
-      } else {
-        next(createHttpError(404))
-      }
-    } catch (error) {
-      next(error)
-      console.log(error)
-    }
-  })
-
-  filesRouter.get("/downloadPDF/:id", async ( req, res) => {
-
-    try {
-      const blogsArray = getBlogs()
-      const index = blogsArray.findIndex(blog => blog.id === req.params.id)
-      const thisBlog = blogsArray[index]
-      res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
-
-
-
-//       let data = thisBlog.cover; // <-- string fetch node-fetch arrayfbuffer  /whatever.jpg
-// let buff = new Buffer(data);
-// let base64data = buff.toString('base64'); // mime  --> whatever.jpg --> image/jpg
-
-// const imageT = "data:image/jpg;base64,/9j/" + base64data
-
-const response = await axios.get(thisBlog.cover, {
-  responseType: "arraybuffer",
+    writeBlogs(blogsArray)
+    response.send(updatedBlog)
+  } catch (error) {
+    next(error)
+  }
 })
-const blogCoverURLParts = thisBlog.cover.split("/");
-const fileName = blogCoverURLParts[blogCoverURLParts.length - 1];
-const [ extension] = fileName.split(".");
-const base64 = response.data.toString("base64");
-const base64Image = `data:image/${extension};base64,${base64}`;
 
-      const source = getPDFstream(thisBlog.title, thisBlog.content, base64Image)
+filesRouter.post("/blogs/:id/cloudinaryUpload", cloudMulterBlog.single("blog"), async (req, res, next) => {
+  try {
 
-      // , imageT
+    const blogs = await getBlogs()
 
-      const destination = res
+    const index = blogs.findIndex(blog => blog.id === req.params.id)
 
-      pipeline(source, destination, err => {
-        console.log(err)
-      })
-    } catch (error) {
-      console.log(error)
+    if (index !== -1) {
+
+      const oldBlog = blogs[index]
+
+      const updatedBlog = { ...oldBlog, cover: req.file.path }
+
+      blogs[index] = updatedBlog
+
+      await writeBlogs(blogs)
+
+      res.send("Uploaded blogs on Cloudinary!")
+    } else {
+      next(createHttpError(404))
     }
-  })
-  
+  } catch (error) {
+    next(error)
+    console.log(error)
+  }
+})
+
+filesRouter.get("/downloadPDF/:id", async (req, res) => {
+
+  try {
+    const blogsArray = getBlogs()
+    const index = blogsArray.findIndex(blog => blog.id === req.params.id)
+    const thisBlog = blogsArray[index]
+    res.setHeader("Content-Disposition", `attachment; ${thisBlog.title}.pdf`)
+
+
+
+    //       let data = thisBlog.cover; // <-- string fetch node-fetch arrayfbuffer  /whatever.jpg
+    // let buff = new Buffer(data);
+    // let base64data = buff.toString('base64'); // mime  --> whatever.jpg --> image/jpg
+
+    // const imageT = "data:image/jpg;base64,/9j/" + base64data
+
+    const response = await axios.get(thisBlog.cover, {
+      responseType: "arraybuffer",
+    })
+    const blogCoverURLParts = thisBlog.cover.split("/");
+    const fileName = blogCoverURLParts[blogCoverURLParts.length - 1];
+    const [extension] = fileName.split(".");
+    const base64 = response.data.toString("base64");
+    const base64Image = `data:image/${extension};base64,${base64}`;
+
+    const source = getPDFstream(thisBlog.title, thisBlog.content, base64Image)
+
+    // , imageT
+
+    const destination = res
+
+    pipeline(source, destination, err => {
+      console.log(err)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 
 export default filesRouter

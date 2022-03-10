@@ -4,6 +4,8 @@ import fs from "fs"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import uniqid from "uniqid"
+import json2csv from "json2csv"
+import { pipeline } from "stream"
 
 
 const currentFilePath = fileURLToPath(import.meta.url)
@@ -13,6 +15,8 @@ const parentFolderPath = dirname(currentFilePath)
 
 
 const authorsJSONPath = join(parentFolderPath, "authors.json")
+
+const getAuthorsReadableStream = () => fs.createReadStream(authorsJSONPath)
 
 const authorsRouter = express.Router()
 
@@ -125,6 +129,24 @@ authorsRouter.delete("/:authorId", (request, response, next) => {
     }
 
 
+})
+
+authorsRouter.get("/downloadCSV/a", ( req, res, next) => {
+    try {
+
+        res.setHeader("Content-Disposition", "attachment; filename=authors.csv")
+
+        const source = getAuthorsReadableStream()
+        const transform = new json2csv.Transform({ fields: ["name", "surname", "email", "birthDate", "avatar", "id"] })
+        const destination = res
+    
+        pipeline(source, transform, destination, err => {
+          console.log( err)
+        })
+        
+    } catch (error) {
+        next(error)
+    }
 })
 
 export default authorsRouter
